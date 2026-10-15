@@ -56,15 +56,15 @@ flowchart TD
 | 输出 | 内容 |
 | --- | --- |
 | `staging.json` | 每场人物开场是否在场、对应物件、方位、位置、坐站、朝向，以及群演人数与位置 |
-| `staging.md` | 方便阅读的地点清单、人物站位表和开场走位句 |
-| `staging-report.html` | 可以拖动调整的俯视平面，检查实时更新，修改后导出 JSON |
+| `staging.md`（可选） | 按需导出的地点清单、人物站位表和开场走位句 |
+| **`staging-report.html`（默认）** | HTML 工具报告：拖动调整俯视站位，检查实时更新，修改后导出 JSON |
 | `blocking` 命令输出 | 每场一句开场走位，交给分镜每场第一段使用 |
 
-Agent 负责识别场景图片并安排站位；随附的 Node.js 工具负责预填数据、检查 8 道质量门、渲染报告和生成走位句。HTML 报告在本地浏览器打开。可以从仓库根目录直接体验完整样例：
+Agent 负责识别场景图片并安排站位；随附的 Node.js 工具负责预填数据、检查 8 道质量门、渲染报告和生成走位句。默认向用户交付 HTML 工具报告，在本地浏览器打开；JSON 作为工作数据保存，Markdown 仅按需导出。可以从仓库根目录直接体验完整样例：
 
 ```bash
 node skills/novel-staging/scripts/novel-staging.mjs validate skills/novel-staging/examples/渡口-staging.json --script skills/novel-staging/references/test-fixtures/upstream/渡口-script.json --art skills/novel-staging/references/test-fixtures/upstream/渡口-art.json
-node skills/novel-staging/scripts/novel-staging.mjs render skills/novel-staging/examples/渡口-staging.json --html > staging-report.html
+node skills/novel-staging/scripts/novel-staging.mjs render skills/novel-staging/examples/渡口-staging.json > staging-report.html
 node skills/novel-staging/scripts/novel-staging.mjs blocking skills/novel-staging/examples/渡口-staging.json
 ```
 
@@ -199,7 +199,7 @@ for f in skills/*/scripts/selftest.mjs; do node "$f"; done
 ├── characters/    ← novel-characters 产出：<剧>-cast.json / .md / -report.html
 ├── art/           ← novel-art 产出：<剧>-art.json / .md / -report.html
 ├── script/        ← novel-script 产出：<剧>-script.json / .md / -report.html
-├── staging/       ← novel-staging 产出：staging.json / staging.md / staging-report.html
+├── staging/       ← novel-staging 产出：staging-report.html（主交付）+ staging.json；Markdown 按需导出
 ├── storyboard/    ← novel-storyboard 产出：<剧>-storyboard.json / .md / -report.html
 │   ├── manifest.json  ← export 产出
 │   ├── E01-01/        ← export 的分镜投产包，每段一个文件夹（prompt.md + f1..fN.png）

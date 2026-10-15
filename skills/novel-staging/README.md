@@ -13,7 +13,7 @@
 - **走位句由程序写** — 「胡二爷坐在第三排坐板上，面朝北；其余座位空着，没有其他人。」分镜这一场第一段照抄它
 - **报告能调整** — 每场一张俯视平面，人可以拖动，点一下调整坐站和朝向，改完导出就是新的 staging.json
 
-产出 `staging.json` + Markdown + 一个双击就能开的 `staging-report.html`。报告界面默认中文；render 加 `--lang en` 输出英文界面（走位句改用认图时写的英文名字）。
+**默认交付 `staging-report.html` HTML 工具报告**：双击打开，拖动调整人物位置、坐站和朝向，在页面内导出修改后的 JSON。`staging.json` 同时作为工作数据保存，Markdown 仅在需要文本版时通过 `--md` 导出。报告界面默认中文；render 加 `--lang en` 输出英文界面（走位句改用认图时写的英文名字）。
 
 ![staging-report.html](assets/report.webp)
 
@@ -62,8 +62,9 @@ novel-storyboard → storyboard.json
 node scripts/novel-staging.mjs seed script.json --art art.json --outline outline.json > staging.json
 node scripts/novel-staging.mjs validate staging.json --script script.json --art art.json
 node scripts/novel-staging.mjs checkup staging.json                 # 只跑质量门
-node scripts/novel-staging.mjs render staging.json --html > staging-report.html
-node scripts/novel-staging.mjs render staging.json --html --lang en  # 英文界面报告
+node scripts/novel-staging.mjs render staging.json > staging-report.html  # 默认 HTML 工具报告
+node scripts/novel-staging.mjs render staging.json --lang en > staging-report.html # 英文界面报告
+node scripts/novel-staging.mjs render staging.json --md > staging.md # 按需导出文本版
 node scripts/novel-staging.mjs blocking staging.json                 # 每场的开场走位句
 ```
 
@@ -73,7 +74,7 @@ node scripts/novel-staging.mjs blocking staging.json                 # 每场的
 SKILL.md                 给 agent 读的工作流
 scripts/
   novel-staging.mjs      seed / validate / checkup / blocking / render / slug
-  selftest.mjs           94 项断言，不调模型
+  selftest.mjs           99 项断言，不调模型
 references/
   schema.md              staging.json 结构 + 坐标系
   read-pass.md           怎么从场景图里认东西（没有图时怎么推算）
@@ -92,6 +93,6 @@ assets/
 node scripts/selftest.mjs
 ```
 
-94 项断言，覆盖平面几何 / 拖动落点 / 走位句 / seed / 8 道门逐项击穿 / 渲染（中英界面、转义、嵌图），还会单独拿嵌进页面的那份算法的源码重建一份核对。不调模型、不花额度、1 秒跑完。改完脚本先跑这个。
+99 项断言，覆盖平面几何 / 拖动落点 / 走位句 / seed / 8 道门逐项击穿 / 渲染（中英界面、转义、嵌图），还会单独拿嵌进页面的那份算法的源码重建一份核对。不调模型、不花额度、1 秒跑完。改完脚本先跑这个。
 
 **只在 macOS + Node 24 上实测过。** 代码没有平台相关调用，Linux 和更低版本 Node 理论上没问题，但**没验过**。

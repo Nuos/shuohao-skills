@@ -4,6 +4,7 @@
 //   node scripts/selftest.mjs
 
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -300,6 +301,23 @@ const ROUND = { name: '红木圆桌', alt: 'round table', plan: [0.3, 0.3, 0.7, 
 {
   eq(slug('渡口 栈桥/东'), '渡口-栈桥-东', 'slug 去掉空白和斜杠');
   eq(slug('  '), 'scene', '空名字有兜底');
+}
+
+/* ---------------- CLI 默认交付格式 ---------------- */
+{
+  const cli = join(here, 'novel-staging.mjs');
+  const fixture = join(here, '..', 'examples', '渡口-staging.json');
+  const render = (...args) => spawnSync(process.execPath, [cli, 'render', fixture, ...args], { encoding: 'utf8' });
+  const primary = render();
+  ok(primary.status === 0 && /^<!doctype html>/i.test(primary.stdout), '不指定格式：默认输出 HTML 工具报告');
+  const legacy = render('--html');
+  ok(legacy.status === 0 && /^<!doctype html>/i.test(legacy.stdout), '显式 --html 继续输出 HTML');
+  const text = render('--md');
+  ok(text.status === 0 && text.stdout.startsWith('# 渡口 · 开场站位'), '显式 --md 才输出 Markdown');
+  const english = render('--lang', 'en');
+  ok(english.status === 0 && /<html lang="en">/.test(english.stdout), '默认 HTML 支持英文界面');
+  const conflict = render('--html', '--md');
+  ok(conflict.status !== 0 && conflict.stdout === '', '格式冲突时不输出混合产物');
 }
 
 console.log(`✓ ${passed} 项自测全部通过`);

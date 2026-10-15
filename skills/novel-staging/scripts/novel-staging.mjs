@@ -1191,7 +1191,7 @@ const USAGE = `novel-staging.mjs — novel-staging skill 的确定性工具（�
   checkup <staging.json> [--script s.json] [--art a.json]
                                          只打印质量门 ✓/✗，有未过项 exit 1
   blocking <staging.json> [--lang zh|en] 打印每一场的开场走位句（分镜这一场第一段照抄它）
-  render <staging.json> [--html|--md]    渲染报告到 stdout（默认 --md）；--html 是能拖动调整站位的页面
+  render <staging.json> [--html|--md]    渲染报告到 stdout（默认 HTML 工具报告）；--md 按需导出 Markdown
         [--lang zh|en]                   界面语言优先级：--lang > staging.json 顶层 lang 字段 > 中文
         [--images <dir>]                 场景图所在目录，默认 staging.json 同级的 images/；
                                          找 <dir>/<地点名>-sheet.png，找到就嵌进报告
@@ -1269,6 +1269,7 @@ function main(argv) {
   if (cmd === 'render') {
     const [path] = rest;
     if (!path) throw new Error('用法：render <staging.json> [--html|--md] [--lang zh|en] [--images <dir>]');
+    if (rest.includes('--html') && rest.includes('--md')) throw new Error('--html 与 --md 不能同时指定');
     const doc = readJson(path);
     const lang = flag(rest, '--lang');
     // 报告默认写在 staging.json 旁边，图片路径按那里算；--images 按普通命令行路径解析
@@ -1280,7 +1281,7 @@ function main(argv) {
       const abs = join(imagesDir, `${slug(loc.name)}-sheet.png`);
       if (existsSync(abs)) images[loc.sceneId] = relative(outDir, abs).split(sep).join('/');
     }
-    process.stdout.write((rest.includes('--html') ? renderHtml(doc, lang, images) : renderMarkdown(doc, lang)) + '\n');
+    process.stdout.write((rest.includes('--md') ? renderMarkdown(doc, lang) : renderHtml(doc, lang, images)) + '\n');
     return;
   }
 

@@ -13,7 +13,7 @@ Opening staging for every scene of an AI short drama: when the scene opens, whic
 - **The program writes the blocking sentence** — "胡二爷 sits on the third bench row, facing north; every other seat is empty and nobody else is there." The storyboard's first segment of the scene copies it
 - **The report can be edited** — a top view per scene: drag people, click one to set sitting or standing and facing, export the result as a new staging.json
 
-Outputs `staging.json` + Markdown + a double-clickable `staging-report.html`. The report UI defaults to Chinese; `render --lang en` gives an English UI (the blocking sentences then use the English names given when reading the picture).
+**The default deliverable is the interactive `staging-report.html` tool report.** Open it in a browser, drag people, adjust posture and facing, and export the edited JSON. `staging.json` is also saved as working data; Markdown is an optional `--md` export. The report UI defaults to Chinese; `render --lang en` gives an English UI (the blocking sentences then use the English names given when reading the picture).
 
 ![staging-report.html with English UI](assets/report-en.jpg)
 
@@ -62,8 +62,9 @@ novel-storyboard → storyboard.json
 node scripts/novel-staging.mjs seed script.json --art art.json --outline outline.json > staging.json
 node scripts/novel-staging.mjs validate staging.json --script script.json --art art.json
 node scripts/novel-staging.mjs checkup staging.json                 # gates only
-node scripts/novel-staging.mjs render staging.json --html > staging-report.html
-node scripts/novel-staging.mjs render staging.json --html --lang en  # English UI
+node scripts/novel-staging.mjs render staging.json > staging-report.html  # HTML by default
+node scripts/novel-staging.mjs render staging.json --lang en > staging-report.html # English UI
+node scripts/novel-staging.mjs render staging.json --md > staging.md # optional text export
 node scripts/novel-staging.mjs blocking staging.json --lang en       # each scene's opening blocking
 ```
 
@@ -73,6 +74,6 @@ node scripts/novel-staging.mjs blocking staging.json --lang en       # each scen
 node scripts/selftest.mjs
 ```
 
-94 assertions: top-view geometry, landing spots, sentences, seed, each of the 8 gates broken one by one, rendering (both UIs, escaping, pictures), and a rebuild of the embedded code from its own source to check it matches the command line. No model calls, under a second.
+99 assertions: top-view geometry, landing spots, sentences, seed, each of the 8 gates broken one by one, rendering (both UIs, escaping, pictures), and a rebuild of the embedded code from its own source to check it matches the command line. No model calls, under a second.
 
 **Tested on macOS + Node 24 only.** Nothing platform-specific in the code, but Linux and older Node are **not verified**.

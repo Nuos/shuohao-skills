@@ -55,15 +55,15 @@ flowchart TD
 | Output | What it provides |
 | --- | --- |
 | `staging.json` | Opening presence, anchor object, side, position, posture, facing, and extras for every scene |
-| `staging.md` | Readable inventories, position tables, and opening blocking sentences |
-| `staging-report.html` | A draggable top view with live checks; export edits back to JSON |
+| `staging.md` (optional) | Text export with inventories, position tables, and opening blocking sentences |
+| **`staging-report.html` (default)** | Interactive tool report with a draggable top view and live checks; export edits back to JSON |
 | `blocking` command output | One opening blocking sentence per scene, ready to copy into its first storyboard segment |
 
-An Agent reads the scene images and plans the staging; the bundled Node.js tools seed the data, check the eight gates, render reports, and generate the blocking sentences. The HTML report opens locally in a browser. To try the completed sample from the repository root:
+An Agent reads the scene images and plans the staging; the bundled Node.js tools seed the data, check the eight gates, render reports, and generate the blocking sentences. The HTML tool report is the default user-facing result and opens locally in a browser. JSON is working data; Markdown is generated only on request. To try the completed sample from the repository root:
 
 ```bash
 node skills/novel-staging/scripts/novel-staging.mjs validate skills/novel-staging/examples/渡口-staging.json --script skills/novel-staging/references/test-fixtures/upstream/渡口-script.json --art skills/novel-staging/references/test-fixtures/upstream/渡口-art.json
-node skills/novel-staging/scripts/novel-staging.mjs render skills/novel-staging/examples/渡口-staging.json --html --lang en > staging-report.html
+node skills/novel-staging/scripts/novel-staging.mjs render skills/novel-staging/examples/渡口-staging.json --lang en > staging-report.html
 node skills/novel-staging/scripts/novel-staging.mjs blocking skills/novel-staging/examples/渡口-staging.json --lang en
 ```
 

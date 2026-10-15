@@ -1,11 +1,11 @@
 ---
 name: novel-staging
-version: 1.0.0
+version: 1.0.1
 description: |
   给 AI 短剧的每一场排开场站位：先从场景图里认出能站能坐的东西（推算到俯视平面上），
   再按剧本给每一场排谁在哪件东西的哪一侧、坐还是站、面朝哪、有没有群演，
   程序写出每一场的开场走位句，分镜这一场第一段照抄它。
-  产出 staging.json + Markdown + 一个能拖动调整站位的单页报告（改完导出就是新的 staging.json）。
+  默认交付能拖动调整站位的 HTML 工具报告，页面内可导出 staging.json；JSON 同时作为工作数据保存，Markdown 按需导出。
   8 道质量门全部由脚本确定性检查（认图件数、东西在图上、出场人物不多不少、在场的人落在认出来的东西上、
   同一侧不叠人、群演写明在哪……）。吃 novel-script 的 script.json 和 novel-art 的 art.json 预填骨架。
   零依赖、零 API key。
@@ -94,13 +94,14 @@ node {baseDir}/scripts/novel-staging.mjs validate <staging.json> --script <scrip
 
 **有违规逐条修，改完重跑，直到通过。**
 
-### Step 5 — 出报告，人在页面上调整
+### Step 5 — 默认交付 HTML 工具报告
 
 ```bash
 cd <输出目录>
-node {baseDir}/scripts/novel-staging.mjs render staging.json --md   > staging.md
-node {baseDir}/scripts/novel-staging.mjs render staging.json --html > staging-report.html
+node {baseDir}/scripts/novel-staging.mjs render staging.json > staging-report.html
 ```
+
+**默认主交付是 `staging-report.html`，完成后直接给用户报告链接或路径，不要只返回 JSON、Markdown 或一段聊天摘要。** `render` 不指定格式时直接输出 HTML，显式 `--html` 仍然支持。`staging.json` 作为工作数据保存，供校验、再次渲染和后续交接；仅在用户需要文本版时执行 `render staging.json --md > staging.md`。
 
 `staging-report.html` 双击就能开，每一场一张俯视平面：
 
@@ -122,15 +123,14 @@ node {baseDir}/scripts/novel-staging.mjs blocking staging.json --lang en  # 英�
 
 分镜写每一场**第一段**的开场走位（novel-storyboard 的 `blocking`）时，照抄这一句；之后各段照旧由上一段的段末走位接下去。
 
-汇报一句话说清：几个地点（几个按图认的、几个按提示词推算的）、几场、几场有人开场不在、群演多少、报告路径；没过的门明说。
+先提供 HTML 工具报告链接或路径，再用一句话说清：几个地点（几个按图认的、几个按提示词推算的）、几场、几场有人开场不在、群演多少；没过的门明说。JSON 是配套工作数据，Markdown 不是默认交付项。
 
 最终落地：
 
 ```
 <输出目录>/
-├── staging.json
-├── staging.md
-├── staging-report.html            ← 双击就能开，能拖动调整
+├── staging-report.html            ← 默认主交付，双击打开，拖动调整并导出 JSON
+├── staging.json                   ← 工作数据，供校验、渲染和后续交接
 └── images/                        ← 本 skill 不写这个目录
     └── <地点名>-sheet.png          ← novel-art 的场景设定图放这儿，认图和报告都使用它
 ```
@@ -161,7 +161,7 @@ seed 吃 script.json，`--art` 给地点名字，`--outline` 给人物名字。n
 node {baseDir}/scripts/selftest.mjs
 ```
 
-94 项断言，不调模型、不花额度。8 道质量门每一道都有击穿用例；平面几何、拖动落点、走位句、seed、报告（中英界面、转义、嵌图）都覆盖；还会单独拿嵌进页面的那份算法的源码重建一份，核对跟命令行算的一样。改完脚本先跑这个。
+99 项断言，不调模型、不花额度。8 道质量门每一道都有击穿用例；平面几何、拖动落点、走位句、seed、报告（中英界面、转义、嵌图）都覆盖；还会单独拿嵌进页面的那份算法的源码重建一份，核对跟命令行算的一样。改完脚本先跑这个。
 
 ## 自带样例
 
